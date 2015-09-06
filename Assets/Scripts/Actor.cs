@@ -28,7 +28,7 @@ public class Actor : MonoBehaviour {
   }
 
   void OnMouseOver () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().addToPath(this);
+      GameObject.Find("Managers").GetComponent<MunchMonsters>().addToPath(this);
   }
 
   void OnMouseUp () {

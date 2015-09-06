@@ -105,6 +105,9 @@ public class MunchMonsters : MonoBehaviour {
     if(movingActor == l) {
       movingActor.restartPathCheck(this);
     }
+    if(l.GetType() == typeof(Monster)) {
+      return;
+    }
     //if first leaf, make sure it's adjacent to your head
     if(movingActor != null && visitedLeaves.Count == 0 && !leafManager.isAdjacent(l, movingActor.row, movingActor.col)) {
       // Debug.Log("not adjacent to monster head.");

@@ -198,7 +198,7 @@ public class Monster : Actor {
     if(this.numSegment == 0)
       GameObject.Find("Managers").GetComponent<MunchMonsters>().startPath(this.row, this.col, this);
   }
-
+  
   public override void restartPathCheck(MunchMonsters mm) {
     if(this.numSegment == 0)
       mm.restartPath(this);

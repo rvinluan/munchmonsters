@@ -28,6 +28,7 @@ public class Flower : Actor {
     foreach(Actor l in visited) {
       l.changeColor(this.color);
     }
+    transform.parent.GetComponent<LeafManager>().GenerateEmptyLeaf(this.col, this.row);
     GameObject.Destroy(gameObject);
     yield return null;
   }
