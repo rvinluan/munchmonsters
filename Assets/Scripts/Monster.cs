@@ -131,7 +131,7 @@ public class Monster : Actor {
     return result;    
   }
 
-  public IEnumerator eat(List<Actor> foodArray) {
+  public override IEnumerator eat(List<Actor> foodArray) {
     int correctColorCount = 0;
     if(foodArray.Count == 0) {
       //this was probably an accidental swipe
@@ -194,16 +194,14 @@ public class Monster : Actor {
     this.GetComponent<SpriteRenderer>().sprite = determineSprite(getDirectionOfSegment(prevSegment), getDirectionOfSegment(nextSegment));
 	}
 
-  void OnMouseOver () {
-    if(this.numSegment == 0)
-      GameObject.Find("Managers").GetComponent<MunchMonsters>().restartPath(this);
-  }
-
   void OnMouseDown () {
     if(this.numSegment == 0)
       GameObject.Find("Managers").GetComponent<MunchMonsters>().startPath(this.row, this.col, this);
   }
-  void OnMouseUp () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().endPath(this.row, this.col);
+
+  public override void restartPathCheck(MunchMonsters mm) {
+    if(this.numSegment == 0)
+      mm.restartPath(this);
   }
+
 }

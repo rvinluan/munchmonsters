@@ -14,7 +14,7 @@ public class MunchMonsters : MonoBehaviour {
   public int maxPathLength = 4;
   private bool drawingLine;
   private List<Actor> visitedLeaves;
-  private Monster movingMonster;
+  private Actor movingActor;
 
   public void Restart () {
     foreach(Transform child in leafManager.transform) {
@@ -75,9 +75,9 @@ public class MunchMonsters : MonoBehaviour {
     }
   }
 
-  public void restartPath(Monster whichMonster) {
-    if(movingMonster == whichMonster && visitedLeaves.Count >= 1) {
-      movingMonster = null;
+  public void restartPath(Actor whichMonster) {
+    if(movingActor == whichMonster && visitedLeaves.Count >= 1) {
+      movingActor = null;
       drawingLine = false;
       line.enabled = false;
       line.SetVertexCount(2);
@@ -85,13 +85,13 @@ public class MunchMonsters : MonoBehaviour {
     }
   }
 
-  public void startPath(int r, int c, Monster whichMonster) {
+  public void startPath(int r, int c, Actor whichMonster) {
     if(gameStateManager.currentGameState == "ended") {
       return;
     }
     line.enabled = true;
     drawingLine = true;
-    movingMonster = whichMonster;
+    movingActor = whichMonster;
     visitedLeaves.Clear();
     line.SetPosition(0, new Vector3(c*tileSize, r*tileSize, 0));
   }
@@ -102,8 +102,11 @@ public class MunchMonsters : MonoBehaviour {
       // Debug.Log("not moving right now.");
       return;
     }
+    if(movingActor == l) {
+      movingActor.restartPathCheck(this);
+    }
     //if first leaf, make sure it's adjacent to your head
-    if(movingMonster != null && visitedLeaves.Count == 0 && !leafManager.isAdjacent(l, movingMonster.row, movingMonster.col)) {
+    if(movingActor != null && visitedLeaves.Count == 0 && !leafManager.isAdjacent(l, movingActor.row, movingActor.col)) {
       // Debug.Log("not adjacent to monster head.");
       return;
     }
@@ -137,7 +140,7 @@ public class MunchMonsters : MonoBehaviour {
     if(drawingLine) {
       drawingLine = false;
       line.enabled = false;
-      StartCoroutine(movingMonster.eat(visitedLeaves));
+      StartCoroutine(movingActor.eat(visitedLeaves));
       line.SetVertexCount(2);
     }
   }

@@ -20,12 +20,9 @@ public class Leaf : Actor {
       transform.localScale = temp;
     }
   }
-  
-  void OnMouseOver () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().addToPath(this);
-  }
 
-  void OnMouseUp () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().endPath(this.row, this.col);
+  public override void changeColor(string newColor) {
+    this.color = newColor;
+    this.GetComponent<SpriteRenderer>().sprite = (Sprite)Resources.Load("Tile_"+this.color, typeof(Sprite));
   }
 }

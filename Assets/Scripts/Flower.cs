@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Flower : Actor {
 
@@ -15,12 +16,20 @@ public class Flower : Actor {
     transform.Rotate(0,0,0.5f);
   }
 
-  void OnMouseOver () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().addToPath(this);
+  void OnMouseDown () {
+    GameObject.Find("Managers").GetComponent<MunchMonsters>().startPath(this.row, this.col, this);
   }
 
-  void OnMouseUp () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().endPath(this.row, this.col);
+  public override void restartPathCheck(MunchMonsters mm) {
+      mm.restartPath(this);
+  }
+
+  public override IEnumerator eat(List<Actor> visited) {
+    foreach(Actor l in visited) {
+      l.changeColor(this.color);
+    }
+    GameObject.Destroy(gameObject);
+    yield return null;
   }
 
 }
