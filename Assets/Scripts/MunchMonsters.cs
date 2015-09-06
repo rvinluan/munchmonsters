@@ -99,21 +99,21 @@ public class MunchMonsters : MonoBehaviour {
   public void addToPath(Actor l) {
     //first off, the obvious
     if(!drawingLine) {
-      Debug.Log("not moving right now.");
+      // Debug.Log("not moving right now.");
       return;
     }
     //if first leaf, make sure it's adjacent to your head
     if(movingMonster != null && visitedLeaves.Count == 0 && !leafManager.isAdjacent(l, movingMonster.row, movingMonster.col)) {
-      Debug.Log("not adjacent to monster head.");
+      // Debug.Log("not adjacent to monster head.");
       return;
     }
     if(visitedLeaves.Count > 0 && !leafManager.isAdjacent(l, visitedLeaves[visitedLeaves.Count - 1])) {
-      Debug.Log("not adjacent to last leaf.");
+      // Debug.Log("not adjacent to last leaf.");
       return;
     }
     if(visitedLeaves.Contains(l)) {
       if(l == visitedLeaves[visitedLeaves.Count - 1]) {
-        Debug.Log("is already the last leaf.");
+        // Debug.Log("is already the last leaf.");
         return;
       } else {
         int index = visitedLeaves.IndexOf(l);

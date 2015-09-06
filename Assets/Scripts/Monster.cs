@@ -172,8 +172,7 @@ public class Monster : Actor {
       nextSegment.moveForwardOnce(oldRow, oldCol, eaten, flower);
     } else {
       if(flower) {
-        Debug.Log("made a flower");
-        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewFlower(oldCol, oldRow, this.color);
+        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewFlower(oldCol, oldRow, "Flower_"+this.color);
         Object.Destroy(eaten.gameObject);
       } else if(eaten.color == color) {
         //put a new leaf in this place
