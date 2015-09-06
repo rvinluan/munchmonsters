@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Monster : MonoBehaviour {
+public class Monster : Actor {
 
   public static string[] monsterTextures = new string[] { 
     "Monster_Head", "Monster_Body_Straight", "Monster_Body_Curved" 
@@ -13,10 +13,7 @@ public class Monster : MonoBehaviour {
   public const int SOUTH     = 2;
   public const int WEST      = 3;
 
-  public int row;
-  public int col;
   public int numSegment;
-  public string monsterName;
   public Monster prevSegment;
   public Monster nextSegment;
 
@@ -25,7 +22,7 @@ public class Monster : MonoBehaviour {
   public void Spawn (int c, int r, string mon) {
     col = c;
     row = r;
-    monsterName = mon;
+    color = mon;
     manager = transform.parent.GetComponent<MonsterManager>();
     numSegment = manager.getSegmentAtStartPosition(c, r);
   }
@@ -60,7 +57,7 @@ public class Monster : MonoBehaviour {
       if(nextFacing == Monster.NOSEGMENT) {
         textureName = "Monster_Tail";
       } else {
-        textureName = "Monster_Head_" + monsterName;
+        textureName = "Monster_Head_" + color;
       }
       int otherFacing = prevFacing == Monster.NOSEGMENT ? nextFacing : prevFacing;
       switch (otherFacing) {
@@ -134,43 +131,53 @@ public class Monster : MonoBehaviour {
     return result;    
   }
 
-  public IEnumerator eat(List<Leaf> leafArray) {
-    int correctLeafCount = 0;
-    if(leafArray.Count == 0) {
+  public IEnumerator eat(List<Actor> foodArray) {
+    int correctColorCount = 0;
+    if(foodArray.Count == 0) {
       //this was probably an accidental swipe
       yield break;
     }
-    for(int i = 0; i < leafArray.Count; i++) {
-      Leaf eatenLeaf = leafArray[i];
-      if(eatenLeaf.color == monsterName) {
-        correctLeafCount++;
+    for(int h = 0; h < foodArray.Count; h++) {
+      if(foodArray[h].color == this.color) {
+        correctColorCount++;
       }
-      moveForwardOnce(eatenLeaf.row, eatenLeaf.col, eatenLeaf);
+    }
+    for(int i = 0; i < foodArray.Count; i++) {
+      Actor eatenLeaf = foodArray[i];
+      if(i == 0 && correctColorCount == 4) {
+        moveForwardOnce(eatenLeaf.row, eatenLeaf.col, eatenLeaf, true);
+      } else {
+        moveForwardOnce(eatenLeaf.row, eatenLeaf.col, eatenLeaf, false);
+      }
       yield return new WaitForSeconds(0.2f);
     }
-    leafArray.Clear();
-    if(correctLeafCount == 0) {
+    foodArray.Clear();
+    if(correctColorCount == 0) {
       transform.parent.GetComponent<MonsterManager>().monsterStarve(this);
     } else {
-      if(correctLeafCount == 4) {
+      if(correctColorCount == 4) {
         //combo!
-        GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addMultiplier(monsterName);
+        GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addMultiplier(color);
       }
-      GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addPoints(monsterName, correctLeafCount);
+      GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addPoints(color, correctColorCount);
     }
   }
 
-  public void moveForwardOnce(int newRow, int newCol, Leaf eaten) {
+  public void moveForwardOnce(int newRow, int newCol, Actor eaten, bool flower) {
     int oldRow = this.row;
     int oldCol = this.col;
     this.row = newRow;
     this.col = newCol;
     if(nextSegment != null) {
-      nextSegment.moveForwardOnce(oldRow, oldCol, eaten);
+      nextSegment.moveForwardOnce(oldRow, oldCol, eaten, flower);
     } else {
-      if(eaten.color == monsterName) {
+      if(flower) {
+        Debug.Log("made a flower");
+        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewFlower(oldCol, oldRow, this.color);
+        Object.Destroy(eaten.gameObject);
+      } else if(eaten.color == color) {
         //put a new leaf in this place
-        string clr = "Tile_" + this.monsterName;
+        string clr = "Tile_" + this.color;
         GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewLeaf(oldCol, oldRow, clr);
         Object.Destroy(eaten.gameObject);
       } else {
@@ -180,13 +187,9 @@ public class Monster : MonoBehaviour {
       }
     }
   }
-
-	// Use this for initialization
-	void Start () {
-	}
 	
 	// Update is called once per frame
-	void Update () {
+	new void Update () {
     float tileSize = GameObject.Find("Managers").GetComponent<MunchMonsters>().tileSize;
     transform.position = new Vector3(this.col*tileSize, this.row*tileSize, 1);
     this.GetComponent<SpriteRenderer>().sprite = determineSprite(getDirectionOfSegment(prevSegment), getDirectionOfSegment(nextSegment));

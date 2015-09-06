@@ -101,7 +101,6 @@ public class ScoreKeeper : MonoBehaviour {
     for(int i = 0; i < 4; i++) {
       string cur = colors[i];
       if(cur == lowestScore) {
-        Debug.Log(sizers[cur]);
         StartCoroutine( sizeSizer(sizers[cur], 125) );
       } else {
         StartCoroutine( sizeSizer(sizers[cur], 75) );

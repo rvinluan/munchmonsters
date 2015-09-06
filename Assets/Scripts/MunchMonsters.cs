@@ -13,7 +13,7 @@ public class MunchMonsters : MonoBehaviour {
   public ScoreKeeper scoreKeeper;
   public int maxPathLength = 4;
   private bool drawingLine;
-  private List<Leaf> visitedLeaves;
+  private List<Actor> visitedLeaves;
   private Monster movingMonster;
 
   public void Restart () {
@@ -24,7 +24,6 @@ public class MunchMonsters : MonoBehaviour {
       GameObject.Destroy(child.gameObject);
     }
     monsterManager.Restart();
-    leafManager.Restart();
     gameStateManager.Restart();
     scoreKeeper.Restart();
     Start();
@@ -35,7 +34,7 @@ public class MunchMonsters : MonoBehaviour {
     Screen.orientation = ScreenOrientation.Portrait;
 
     board = new int[8,8];
-    visitedLeaves = new List<Leaf>();
+    visitedLeaves = new List<Actor>();
     string mon;
     drawingLine = false;
     line.enabled = false;
@@ -58,8 +57,8 @@ public class MunchMonsters : MonoBehaviour {
     foreach(var m in monsterManager.monsters) {
       //assign previous and next pointers.
       //you can't do this until all the segments have been placed.
-      m.prevSegment = monsterManager.getMonsterSegment(m.monsterName, m.numSegment - 1);
-      m.nextSegment = monsterManager.getMonsterSegment(m.monsterName, m.numSegment + 1);
+      m.prevSegment = monsterManager.getMonsterSegment(m.color, m.numSegment - 1);
+      m.nextSegment = monsterManager.getMonsterSegment(m.color, m.numSegment + 1);
     }
 	}
 	
@@ -97,16 +96,24 @@ public class MunchMonsters : MonoBehaviour {
     line.SetPosition(0, new Vector3(c*tileSize, r*tileSize, 0));
   }
 
-  public void addToPath(Leaf l) {
+  public void addToPath(Actor l) {
+    //first off, the obvious
+    if(!drawingLine) {
+      Debug.Log("not moving right now.");
+      return;
+    }
     //if first leaf, make sure it's adjacent to your head
     if(movingMonster != null && visitedLeaves.Count == 0 && !leafManager.isAdjacent(l, movingMonster.row, movingMonster.col)) {
+      Debug.Log("not adjacent to monster head.");
       return;
     }
     if(visitedLeaves.Count > 0 && !leafManager.isAdjacent(l, visitedLeaves[visitedLeaves.Count - 1])) {
+      Debug.Log("not adjacent to last leaf.");
       return;
     }
     if(visitedLeaves.Contains(l)) {
       if(l == visitedLeaves[visitedLeaves.Count - 1]) {
+        Debug.Log("is already the last leaf.");
         return;
       } else {
         int index = visitedLeaves.IndexOf(l);
@@ -121,7 +128,7 @@ public class MunchMonsters : MonoBehaviour {
     int totalPathLength = visitedLeaves.Count + 2;
     line.SetVertexCount(totalPathLength);
     for(int i = 0; i < totalPathLength - 2; i++) {
-      Leaf nl = visitedLeaves[i];
+      Actor nl = visitedLeaves[i];
       line.SetPosition(i+1, new Vector3(nl.col*tileSize, nl.row*tileSize, 0));
     }
   }

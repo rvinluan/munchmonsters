@@ -7,17 +7,12 @@ public class LeafManager : MonoBehaviour {
 
   public static string[] leafTextures = new string[] { "Tile_A", "Tile_B", "Tile_C", "Tile_D" };
 
-  public List<Leaf> leaves;
   public Leaf leafPrefab;
+  public Flower flowerPrefab;
 
 	// Use this for initialization
 	void Start () {
-	 leaves = new List<Leaf>();
 	}
-
-  public void Restart () {
-    leaves = new List<Leaf>();
-  }
 	
 	// Update is called once per frame
 	void Update () {
@@ -41,7 +36,6 @@ public class LeafManager : MonoBehaviour {
     ) as Leaf;
     leaf.Spawn(c, r, randTile);
     leaf.gameObject.transform.parent = transform;
-    leaves.Add(leaf);
     return leaf;
   }
 
@@ -51,13 +45,26 @@ public class LeafManager : MonoBehaviour {
     return el;
   }
 
-  public bool isAdjacent(Leaf leaf, int r, int c) {
+
+  public Flower GenerateNewFlower(int c, int r, string color) {
+    float tileSize = transform.parent.GetComponent<MunchMonsters>().tileSize;
+    Flower flower = Instantiate(
+      flowerPrefab,
+      new Vector3(c*tileSize, r*tileSize, 0.9f),
+      Quaternion.identity
+    ) as Flower;
+    flower.Spawn(c, r, color);
+    flower.gameObject.transform.parent = transform;
+    return flower;
+  }
+
+  public bool isAdjacent(Actor leaf, int r, int c) {
     int xdiff = Math.Abs(leaf.col - c);
     int ydiff = Math.Abs(leaf.row - r);
     return (xdiff != ydiff) && (xdiff == 0 || ydiff == 0) && (xdiff < 2 && ydiff < 2);
   }
 
-  public bool isAdjacent(Leaf l1, Leaf l2) {
+  public bool isAdjacent(Actor l1, Actor l2) {
     int xdiff = Math.Abs(l1.col - l2.col);
     int ydiff = Math.Abs(l1.row - l2.row);
     return (xdiff != ydiff) && (xdiff == 0 || ydiff == 0) && (xdiff < 2 && ydiff < 2);

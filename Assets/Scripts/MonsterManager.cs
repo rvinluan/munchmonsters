@@ -48,7 +48,7 @@ public class MonsterManager : MonoBehaviour {
       return null;
     }
     foreach(var m in monsters) {
-      if(m.GetComponent<Monster>().monsterName == monsterName 
+      if(m.GetComponent<Monster>().color == monsterName 
         && m.GetComponent<Monster>().numSegment == segment) {
         return m;
       }

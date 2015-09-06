@@ -1,11 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Leaf : MonoBehaviour {
-
-  public int row;
-  public int col;
-  public string color;
+public class Leaf : Actor {
 
   public void Spawn (int c, int r, string clr) {
     col = c;
@@ -24,15 +20,7 @@ public class Leaf : MonoBehaviour {
       transform.localScale = temp;
     }
   }
-
-	// Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
-
+  
   void OnMouseOver () {
     GameObject.Find("Managers").GetComponent<MunchMonsters>().addToPath(this);
   }
