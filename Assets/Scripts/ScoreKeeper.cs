@@ -21,6 +21,7 @@ public class ScoreKeeper : MonoBehaviour {
   private Dictionary<string, int> multipliers;
   private Dictionary<string, RectTransform> sizers;
   private string lowestScore;
+  private Prefs prefs;
   private static string[] colors = new string[4] {"A", "B", "C", "D"};
 
   public void Restart() {
@@ -37,7 +38,9 @@ public class ScoreKeeper : MonoBehaviour {
     multiplierForB.enabled = false;
     multiplierForC.enabled = false;
     multiplierForD.enabled = false;
-    updateScoreIndicator(lowestScore);
+    if(prefs.gameMode == Prefs.GameMode.Lowest) {
+      updateScoreIndicator(lowestScore);
+    }
   }
 
 	// Use this for initialization
@@ -62,6 +65,7 @@ public class ScoreKeeper : MonoBehaviour {
     sizers.Add("B", sizerB);
     sizers.Add("C", sizerC);
     sizers.Add("D", sizerD);
+    prefs = GameObject.Find("Prefs").GetComponent<Prefs>();
 	}
 	
 	// Update is called once per frame
@@ -117,10 +121,19 @@ public class ScoreKeeper : MonoBehaviour {
       }
     }
     lowestScore = tempLowestScore;
-    updateScoreIndicator(lowestScore);
+    if(prefs.gameMode == Prefs.GameMode.Lowest) {
+      updateScoreIndicator(lowestScore);
+    }
   }
 
   public int getLowestScore() {
     return scores[lowestScore];
+  }
+  public int getCombinedScore() {
+    int total = 0;
+    foreach(KeyValuePair<string, int> sc in scores) {
+      total += sc.Value;
+    }
+    return total;
   }
 }
