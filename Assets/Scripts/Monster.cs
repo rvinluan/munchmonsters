@@ -152,12 +152,13 @@ public class Monster : Actor {
       yield return new WaitForSeconds(0.2f);
     }
     foodArray.Clear();
+    GameObject.Find("leafManager").GetComponent<LeafManager>().renewNextLeaf();
     if(correctColorCount == 0) {
       transform.parent.GetComponent<MonsterManager>().monsterStarve(this);
     } else {
       if(correctColorCount == 4) {
-        //combo!
-        GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addMultiplier(color);
+        //combo! don't do multipliers for now?
+        //GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addMultiplier(color);
       }
       GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addPoints(color, correctColorCount);
     }
@@ -176,8 +177,9 @@ public class Monster : Actor {
         Object.Destroy(eaten.gameObject);
       } else if(eaten.color == color) {
         //put a new leaf in this place
-        string clr = "Tile_" + this.color;
-        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewLeaf(oldCol, oldRow, clr);
+        // string clr = "Tile_" + this.color;
+        // GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewLeaf(oldCol, oldRow, clr);
+        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewNextLeaf(oldCol, oldRow);
         Object.Destroy(eaten.gameObject);
       } else {
         //don't make a new leaf

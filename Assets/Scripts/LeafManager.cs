@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,15 +10,35 @@ public class LeafManager : MonoBehaviour {
 
   public Leaf leafPrefab;
   public Flower flowerPrefab;
+  public Image nextLeafImage;
 
 	// Use this for initialization
 	void Start () {
+    renewNextLeaf();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+  public Leaf GenerateNewNextLeaf(int c, int r) {
+    float tileSize = transform.parent.GetComponent<MunchMonsters>().tileSize;
+    Leaf leaf = Instantiate(
+      leafPrefab,
+      new Vector3(c*tileSize, r*tileSize, 1),
+      Quaternion.identity
+    ) as Leaf;
+    leaf.Spawn(c, r, nextLeafImage.sprite.name);
+    leaf.gameObject.transform.parent = transform;
+    return leaf;
+  }
+
+  public void renewNextLeaf() {
+    List<string> possibleColors = new List<string>(leafTextures);
+    string randTile = possibleColors[ (int)(UnityEngine.Random.value * possibleColors.Count) ];
+    nextLeafImage.sprite = (Sprite)Resources.Load(randTile, typeof(Sprite));
+  }
 
   public Leaf GenerateNewLeaf(int c, int r) {
     //exclude no colors

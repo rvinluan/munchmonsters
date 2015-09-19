@@ -5,6 +5,7 @@ using System.Collections;
 public class MenuController : MonoBehaviour {
 
   public Button StartButton;
+  public Button QuitButton;
   public Button CombinedButton;
   public Button LowestButton;
   public Button BackButton;
@@ -12,6 +13,8 @@ public class MenuController : MonoBehaviour {
   public Text HighScoreCombinedText;
   public RectTransform HighlightA;
   public RectTransform HighlightB;
+  public RectTransform HighlightC;
+  public RectTransform HighlightD;
   public int currentScreen = 1;
   public Prefs prefs;
 
@@ -22,6 +25,7 @@ public class MenuController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
     StartButton.onClick.AddListener(progressToPickMode);
+    QuitButton.onClick.AddListener(quitGame);
   	CombinedButton.onClick.AddListener(startCombinedGame);
     LowestButton.onClick.AddListener(startLowestGame);
     BackButton.onClick.AddListener(goBack);
@@ -35,6 +39,10 @@ public class MenuController : MonoBehaviour {
     StartCoroutine(animateHighlight(HighlightA, StartButton));
   }
 
+  void quitGame () {
+    StartCoroutine(animateHighlight(HighlightD, QuitButton));
+  }
+
   void startCombinedGame () {
     StartCoroutine(animateHighlight(HighlightA, CombinedButton));
   }
@@ -44,7 +52,7 @@ public class MenuController : MonoBehaviour {
   }
 
   void goBack () {
-    transitionScreen(currentScreen - 1);
+    transitionScreenBack(currentScreen - 1);
   }
 
   public IEnumerator animateHighlight(RectTransform whichHighlight, Button whichButton) {
@@ -87,10 +95,22 @@ public class MenuController : MonoBehaviour {
     currentScreen = screenNo;
   }
 
+  void transitionScreenBack(int screenNo) {
+    RectTransform oldScreen = GameObject.Find("Screen"+currentScreen).GetComponent<RectTransform>();
+    RectTransform newScreen = GameObject.Find("Screen"+screenNo).GetComponent<RectTransform>();
+    StartCoroutine(animateScreenObjects(oldScreen, 770));
+    StartCoroutine(animateScreenObjects(newScreen, 0));
+    currentScreen = screenNo;
+  }
+
+
   void loadNextScreen(Button which) {
     switch(which.gameObject.name) {
       case "PlayButton":
         transitionScreen(2);
+      break;
+      case "Quit":
+        Application.Quit();
       break;
       case "Combined":
         prefs.gameMode = Prefs.GameMode.Combined;
