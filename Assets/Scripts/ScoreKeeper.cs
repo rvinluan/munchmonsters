@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class ScoreKeeper : MonoBehaviour {
 
+  public Text seedScoreText;
   public Text scoreForA;
   public Text scoreForB;
   public Text scoreForC;
@@ -30,6 +31,7 @@ public class ScoreKeeper : MonoBehaviour {
     scores["B"] = 0;
     scores["C"] = 0;
     scores["D"] = 0;
+    scores["seed"] = 0;
     multipliers["A"] = 1;
     multipliers["B"] = 1;
     multipliers["C"] = 1;
@@ -51,6 +53,7 @@ public class ScoreKeeper : MonoBehaviour {
     scores.Add("B", 0);
     scores.Add("C", 0);
     scores.Add("D", 0);
+    scores.Add("seed", 0);
     multipliers = new Dictionary<string, int>();
     multipliers.Add("A", 1);
     multipliers.Add("B", 1);
@@ -74,6 +77,7 @@ public class ScoreKeeper : MonoBehaviour {
     scoreForB.text = scores["B"].ToString();
     scoreForC.text = scores["C"].ToString();
     scoreForD.text = scores["D"].ToString();
+    seedScoreText.text = scores["seed"].ToString();
 	}
 
   public void addMultiplier(string mon) {
@@ -112,6 +116,10 @@ public class ScoreKeeper : MonoBehaviour {
     }
   }
 
+  public void addSeedPoints(int numPoints) {
+    scores["seed"] += numPoints;
+  }
+
   public void addPoints(string mon, int numPoints) {
     scores[mon] += numPoints * multipliers[mon];
     string tempLowestScore = "A";
@@ -127,13 +135,15 @@ public class ScoreKeeper : MonoBehaviour {
   }
 
   public int getLowestScore() {
-    return scores[lowestScore];
+    // return scores[lowestScore];
+    return scores["seed"];
   }
   public int getCombinedScore() {
-    int total = 0;
-    foreach(KeyValuePair<string, int> sc in scores) {
-      total += sc.Value;
-    }
-    return total;
+    // int total = 0;
+    // foreach(KeyValuePair<string, int> sc in scores) {
+    //   total += sc.Value;
+    // }
+    // return total;
+    return scores["seed"];
   }
 }

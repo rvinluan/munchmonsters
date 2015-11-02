@@ -14,13 +14,23 @@ public class LeafManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-    renewNextLeaf();
+    //renewNextLeaf();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+  public Leaf GetLeafAt(int c, int r) {
+    foreach (Transform child in transform)
+    {
+      Leaf l = child.GetComponent<Leaf>();
+      Debug.Log(l.col);
+      Debug.Log(l.row);
+    }
+    return null;
+  }
 
   public Leaf GenerateNewNextLeaf(int c, int r) {
     float tileSize = transform.parent.GetComponent<MunchMonsters>().tileSize;
@@ -38,6 +48,18 @@ public class LeafManager : MonoBehaviour {
     List<string> possibleColors = new List<string>(leafTextures);
     string randTile = possibleColors[ (int)(UnityEngine.Random.value * possibleColors.Count) ];
     nextLeafImage.sprite = (Sprite)Resources.Load(randTile, typeof(Sprite));
+  }
+
+  public Leaf GenerateNewLeafSpecificColor(string clr, int c, int r) {
+    float tileSize = transform.parent.GetComponent<MunchMonsters>().tileSize;
+    Leaf leaf = Instantiate(
+      leafPrefab,
+      new Vector3(c*tileSize, r*tileSize, 1),
+      Quaternion.identity
+    ) as Leaf;
+    leaf.Spawn(c, r, "Tile_"+clr);
+    leaf.gameObject.transform.parent = transform;
+    return leaf;
   }
 
   public Leaf GenerateNewLeaf(int c, int r) {

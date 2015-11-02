@@ -88,7 +88,6 @@ public class PathDrawer : MonoBehaviour {
         return new Vector3( pos1.x, pos1.y - tileSize/2, 1 );
       }
     }
-    return pos1;
   }
 
   public void SetPosition(int index, Vector3 pos) {

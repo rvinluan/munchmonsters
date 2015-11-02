@@ -138,21 +138,17 @@ public class Monster : Actor {
       yield break;
     }
     for(int h = 0; h < foodArray.Count; h++) {
-      if(foodArray[h].color == this.color) {
+      if(foodArray[h].color == this.color || foodArray[h].GetType() == typeof(Seed)) {
         correctColorCount++;
       }
     }
     for(int i = 0; i < foodArray.Count; i++) {
       Actor eatenLeaf = foodArray[i];
-      if(i == 0 && correctColorCount == 4) {
-        moveForwardOnce(eatenLeaf.row, eatenLeaf.col, eatenLeaf, true);
-      } else {
-        moveForwardOnce(eatenLeaf.row, eatenLeaf.col, eatenLeaf, false);
-      }
+      moveForwardOnce(eatenLeaf.row, eatenLeaf.col, eatenLeaf);
       yield return new WaitForSeconds(0.2f);
     }
     foodArray.Clear();
-    GameObject.Find("leafManager").GetComponent<LeafManager>().renewNextLeaf();
+    // GameObject.Find("leafManager").GetComponent<LeafManager>().renewNextLeaf();
     if(correctColorCount == 0) {
       transform.parent.GetComponent<MonsterManager>().monsterStarve(this);
     } else {
@@ -160,33 +156,48 @@ public class Monster : Actor {
         //combo! don't do multipliers for now?
         //GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addMultiplier(color);
       }
-      GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addPoints(color, correctColorCount);
+      // GameObject.Find("scoreKeeper").GetComponent<ScoreKeeper>().addPoints(color, correctColorCount);
     }
   }
 
-  public void moveForwardOnce(int newRow, int newCol, Actor eaten, bool flower) {
+  public void moveForwardOnce(int newRow, int newCol, Actor eaten) {
     int oldRow = this.row;
     int oldCol = this.col;
     this.row = newRow;
     this.col = newCol;
     if(nextSegment != null) {
-      nextSegment.moveForwardOnce(oldRow, oldCol, eaten, flower);
+      nextSegment.moveForwardOnce(oldRow, oldCol, eaten);
     } else {
-      if(flower) {
-        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewFlower(oldCol, oldRow, "Flower_"+this.color);
-        Object.Destroy(eaten.gameObject);
-      } else if(eaten.color == color) {
-        //put a new leaf in this place
-        // string clr = "Tile_" + this.color;
-        // GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewLeaf(oldCol, oldRow, clr);
-        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewNextLeaf(oldCol, oldRow);
-        Object.Destroy(eaten.gameObject);
+      if(eaten.GetType() == typeof(Seed)) {
+        Seed s = eaten as Seed;
+        s.resetPosition(oldCol, oldRow);
+        s.eatLeaves(this.color);
       } else {
-        //don't make a new leaf
-        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateEmptyLeaf(oldCol, oldRow);
-        Object.Destroy(eaten.gameObject);
+        //no new leaves
+        GameObject.Find("leafManager").GetComponent<LeafManager>().GenerateNewLeafSpecificColor(getProducedColor(), oldCol, oldRow);
+        Object.Destroy(eaten.gameObject); 
       }
+      // GameObject.Find("SeedObject").GetComponent<Seed>().eat(this.color);
     }
+  }
+
+  public string getProducedColor() {
+    string returnColor = "A";
+    switch (this.color) {
+      case "A":
+        returnColor = "B";
+        break;
+      case "B":
+        returnColor = "C";
+        break;
+      case "C":
+        returnColor = "D";
+        break;
+      case "D":
+        returnColor = "A";
+        break;
+    }
+    return returnColor;
   }
 	
 	// Update is called once per frame

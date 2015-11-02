@@ -9,6 +9,8 @@ public class MunchMonsters : MonoBehaviour {
   public float tileSize;
   public MonsterManager monsterManager;
   public LeafManager leafManager;
+  public GameObject seedParent;
+  public Seed seedPrefab;
   public GameStateManager gameStateManager;
   public PathDrawer line;
   public ScoreKeeper scoreKeeper;
@@ -20,14 +22,25 @@ public class MunchMonsters : MonoBehaviour {
 
   public void Restart () {
     foreach(Transform child in leafManager.transform) {
+      child.tag = "Untagged";
       GameObject.Destroy(child.gameObject);
     }
     foreach(Transform child in monsterManager.transform) {
       GameObject.Destroy(child.gameObject);
     }
+    foreach(Transform child in seedParent.transform) {
+      child.tag = "Untagged";
+      GameObject.Destroy(child.gameObject);
+    }
     monsterManager.Restart();
     gameStateManager.Restart();
     scoreKeeper.Restart();
+    Seed newSeed = Instantiate(
+      seedPrefab,
+      new Vector3(0, 0, 1),
+      Quaternion.identity
+    ) as Seed;
+    newSeed.transform.parent = seedParent.transform;
     Start();
   }
 
@@ -57,13 +70,20 @@ public class MunchMonsters : MonoBehaviour {
         }
       }
     }//end for loop
-
+    
     foreach(var m in monsterManager.monsters) {
       //assign previous and next pointers.
       //you can't do this until all the segments have been placed.
       m.prevSegment = monsterManager.getMonsterSegment(m.color, m.numSegment - 1);
       m.nextSegment = monsterManager.getMonsterSegment(m.color, m.numSegment + 1);
     }
+
+    //spawn seed
+    Seed theseed = GameObject.FindWithTag("SeedObject").GetComponent<Seed>();
+    if(theseed == null) {
+      theseed = GameObject.Find("SeedObject").GetComponent<Seed>();
+    }
+    theseed.resetPosition();
 	}
 	
 	// Update is called once per frame
@@ -122,10 +142,6 @@ public class MunchMonsters : MonoBehaviour {
       // Debug.Log("not adjacent to monster head.");
       return;
     }
-    if(visitedLeaves.Count > 0 && !leafManager.isAdjacent(l, visitedLeaves[visitedLeaves.Count - 1])) {
-      // Debug.Log("not adjacent to last leaf.");
-      return;
-    }
     if(visitedLeaves.Contains(l)) {
       if(l == visitedLeaves[visitedLeaves.Count - 1]) {
         // Debug.Log("is already the last leaf.");
@@ -135,6 +151,10 @@ public class MunchMonsters : MonoBehaviour {
         int numToRemove = visitedLeaves.Count - index;
         visitedLeaves.RemoveRange(index, numToRemove);
       }
+    }
+    if(visitedLeaves.Count > 0 && !leafManager.isAdjacent(l, visitedLeaves[visitedLeaves.Count - 1])) {
+      // Debug.Log("not adjacent to last leaf.");
+      return;
     }
     if(!drawingLine || visitedLeaves.Count >= maxPathLength) { 
       return; 
