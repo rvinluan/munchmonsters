@@ -16,21 +16,4 @@ public class Flower : Actor {
     transform.Rotate(0,0,0.5f);
   }
 
-  void OnMouseDown () {
-    GameObject.Find("Managers").GetComponent<MunchMonsters>().startPath(this.row, this.col, this);
-  }
-
-  public override void restartPathCheck(MunchMonsters mm) {
-      mm.restartPath(this);
-  }
-
-  public override IEnumerator eat(List<Actor> visited) {
-    foreach(Actor l in visited) {
-      l.changeColor(this.color);
-    }
-    transform.parent.GetComponent<LeafManager>().GenerateEmptyLeaf(this.col, this.row);
-    GameObject.Destroy(gameObject);
-    yield return null;
-  }
-
 }
