@@ -65,7 +65,7 @@ public class ScoreKeeper : MonoBehaviour {
     sizers.Add("B", sizerB);
     sizers.Add("C", sizerC);
     sizers.Add("D", sizerD);
-    prefs = GameObject.Find("Prefs").GetComponent<Prefs>();
+    // prefs = GameObject.Find("Prefs").GetComponent<Prefs>();
 	}
 	
 	// Update is called once per frame
@@ -121,9 +121,9 @@ public class ScoreKeeper : MonoBehaviour {
       }
     }
     lowestScore = tempLowestScore;
-    if(prefs.gameMode == Prefs.GameMode.Lowest) {
-      updateScoreIndicator(lowestScore);
-    }
+    // if(prefs.gameMode == Prefs.GameMode.Lowest) {
+    //   updateScoreIndicator(lowestScore);
+    // }
   }
 
   public int getLowestScore() {

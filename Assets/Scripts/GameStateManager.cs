@@ -22,7 +22,7 @@ public class GameStateManager : MonoBehaviour {
     currentGameState = "playing";
     modal.SetActive(false);
     restartButton.onClick.AddListener(restartGame);
-    prefs = GameObject.Find("Prefs").GetComponent<Prefs>();
+    // prefs = GameObject.Find("Prefs").GetComponent<Prefs>();
 	}
 	
 	// Update is called once per frame
@@ -38,11 +38,11 @@ public class GameStateManager : MonoBehaviour {
   public void displayModal() {
     currentGameState = "ended";
     int finalScore = 0;
-    if(prefs.gameMode == Prefs.GameMode.Lowest) {
-      finalScore = scoreKeeper.getLowestScore();
-    } else {
-      finalScore = scoreKeeper.getCombinedScore();
-    }
+    // if(prefs.gameMode == Prefs.GameMode.Lowest) {
+    //   finalScore = scoreKeeper.getLowestScore();
+    // } else {
+    //   finalScore = scoreKeeper.getCombinedScore();
+    // }
     if(finalScore > prefs.getHighScore(prefs.gameMode)) {
       //new high score! message this somewhere.
       Debug.Log(prefs.getHighScore(prefs.gameMode));

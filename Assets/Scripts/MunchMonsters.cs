@@ -58,6 +58,13 @@ public class MunchMonsters : MonoBehaviour {
       }
     }//end for loop
 
+    //instantiate the initial flowers
+    for(int i = 0; i < 3; i++) {
+      Leaf leafToChange = leafManager.transform.GetChild( Random.Range(0, leafManager.transform.childCount) ).GetComponent<Leaf>();
+      Flower f = leafManager.GenerateNewFlower(leafToChange.col, leafToChange.row);
+      Object.Destroy(leafToChange.gameObject);
+    }
+
     foreach(var m in monsterManager.monsters) {
       //assign previous and next pointers.
       //you can't do this until all the segments have been placed.

@@ -66,7 +66,14 @@ public class LeafManager : MonoBehaviour {
     return el;
   }
 
+  //no specific color
+  public Flower GenerateNewFlower(int c, int r) {
+    string[] randomColor = new string[] {"A", "B", "C", "D"};
+    int index = UnityEngine.Random.Range(0, randomColor.Length);
+    return GenerateNewFlower(c, r, "Flower_"+randomColor[index]);
+  }
 
+  //specific color
   public Flower GenerateNewFlower(int c, int r, string color) {
     float tileSize = transform.parent.GetComponent<MunchMonsters>().tileSize;
     Flower flower = Instantiate(
